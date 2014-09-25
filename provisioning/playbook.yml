@@ -1,0 +1,52 @@
+--- # Only one host to provision
+- hosts: main
+
+  tasks:
+
+    - action: shell whoami
+      register: whoami
+
+    - name: update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+      sudo: yes
+
+    - name: upgrade the distro
+      apt: upgrade=yes
+      sudo: yes
+
+    - name: install packages
+      apt: pkg={{ item }} state=latest
+      sudo: yes
+      with_items:
+        - build-essential
+        - git
+        - tree
+        - vim
+        - psmisc
+        - fail2ban
+        - chkrootkit
+        - ufw
+        - curl
+        - gnupg
+        - zip
+        - rsync
+        - wget
+        - unattended-upgrades
+
+    - name: set swapon
+      sudo: yes
+      sudo_user: root
+      action: shell dd if=/dev/zero of=/swap bs=1M count=1024 && mkswap /swap && swapon /swap
+
+    - name: set locale
+      sudo: yes
+      sudo_user: root
+      action: shell locale-gen en_GB.UTF-8
+
+    - name: set tzdata
+      sudo: yes
+      sudo_user: root
+      action: shell echo 'Europe/London' > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+
+    - name: set user bash
+      action: shell echo 'cd /vagrant/' >> /home/vagrant/.bashrc
