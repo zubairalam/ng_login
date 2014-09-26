@@ -2,6 +2,7 @@ ng_login
 ========
 
 In this app I'm trying to acheive two following goals:
+
     * Setup Ansible provisioning
     * An Angular App that consumes Rest services from a Django Rest Framework Powered Django App
 
